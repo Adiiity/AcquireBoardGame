@@ -6,6 +6,7 @@ import { Picker } from "@react-native-picker/picker";
 
 import { Alert } from 'react-native';
 
+import { PlayerData } from "../types";
 
 type PlayerConfigNavigatorProp=StackNavigationProp<RootStackParamList,'PlayerConfig'>;
 
@@ -13,20 +14,25 @@ type Props={
   navigation:PlayerConfigNavigatorProp;  
 };
 
-interface PlayerData{
-    id:number;
-    name:string;
-    mode:'Self'| 'Strategy 1' | 'Strategy 2' | 'Strategy 3' | 'Strategy 4';
-}
+// interface PlayerData{
+//     id:number;
+//     name:string;
+//     mode:'Self'| 'Strategy 1' | 'Strategy 2' | 'Strategy 3' | 'Strategy 4';
+// }
+const initialCash = 6000; // Each player starts with $6,000
+
 const PlayerConfig: React.FC<Props>=({navigation})=>{
     const [numPlayers, setNumPlayers] = useState<number>(2);
     const [players, setPlayers] = useState<PlayerData[]>([]);
+    
     
     React.useEffect(()=>{
         const initialPlayers=Array.from({length: numPlayers},(_,index)=> ({
             id: index,
             name: `Player ${index + 1}`,
             mode: 'Self' as 'Self',
+            cash: initialCash,
+            stocks: {}, // No stocks at the beginning
         }));
         setPlayers(initialPlayers);
     },[numPlayers]);
@@ -43,6 +49,7 @@ const PlayerConfig: React.FC<Props>=({navigation})=>{
         // Validate inputs and navigate to the next screen
         // console.log('Players:', players);
         // here, navigation.navigate('NextScreen', { players });
+        
         try{
           const response=await fetch('https://acquiregame.onrender.com/');
           const textResponse=await response.text();
@@ -52,7 +59,8 @@ const PlayerConfig: React.FC<Props>=({navigation})=>{
           console.error('Error fetching backend: ',error);
           Alert.alert('Error','Error occurred while connecting')
         }
-        
+        // After successfully fetching from backend, navigate to BoardSetup
+        navigation.navigate('BoardSetup', { players });
     };
     
     return (

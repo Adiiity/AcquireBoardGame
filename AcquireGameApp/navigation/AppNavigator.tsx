@@ -4,10 +4,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Landing from "../screens/Landing";
 import PlayerConfig from "../screens/PlayerConfig";
+import BoardSetup from "../screens/Boardsetup";
+import { PlayerData } from "../types";
 
 export type RootStackParamList={
     Landing: undefined;
     PlayerConfig: undefined;
+    BoardSetup:{players:PlayerData[]};
 }
 
 const Stack=createStackNavigator<RootStackParamList>();
@@ -21,6 +24,10 @@ const AppNavigator: React.FC=()=>(
             <Stack.Screen name="PlayerConfig"
             component={PlayerConfig}
             options={{title:'Players'}}/>
+            <Stack.Screen
+            name="BoardSetup"
+            component={BoardSetup}
+            options={{ title: 'Game Board' }}/>
         </Stack.Navigator>
     </NavigationContainer>
 )
