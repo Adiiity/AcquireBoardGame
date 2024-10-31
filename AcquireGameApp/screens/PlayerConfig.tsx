@@ -7,6 +7,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Alert } from 'react-native';
 
 import { PlayerData } from "../types";
+import { colors } from "../colors";
 
 type PlayerConfigNavigatorProp=StackNavigationProp<RootStackParamList,'PlayerConfig'>;
 
@@ -14,11 +15,6 @@ type Props={
   navigation:PlayerConfigNavigatorProp;  
 };
 
-// interface PlayerData{
-//     id:number;
-//     name:string;
-//     mode:'Self'| 'Strategy 1' | 'Strategy 2' | 'Strategy 3' | 'Strategy 4';
-// }
 const initialCash = 6000; // Each player starts with $6,000
 
 const PlayerConfig: React.FC<Props>=({navigation})=>{
@@ -46,10 +42,7 @@ const PlayerConfig: React.FC<Props>=({navigation})=>{
     };
 
     const handleProceed = async () => {
-        // Validate inputs and navigate to the next screen
-        // console.log('Players:', players);
-        // here, navigation.navigate('NextScreen', { players });
-        
+       
         try{
           const response=await fetch('https://acquiregame.onrender.com/');
           const textResponse=await response.text();
@@ -119,7 +112,8 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: '#FFFFFF',
+      // backgroundColor: colors.background,
+      
     },
     title: {
       fontSize: 28,
@@ -132,7 +126,7 @@ const styles = StyleSheet.create({
     },
     pickerContainer: {
       borderWidth: 1,
-      borderColor: '#777',
+      borderColor: colors.tileBorder,
       borderRadius: 5,
       marginBottom: 20,
       overflow: 'hidden',
