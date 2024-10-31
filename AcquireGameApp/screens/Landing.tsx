@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     background: {
       flex: 1,
       resizeMode: 'cover',
+      
     },
     overlay: {
       flex: 1,
