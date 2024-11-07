@@ -5,12 +5,14 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Landing from "../screens/Landing";
 import PlayerConfig from "../screens/PlayerConfig";
 import BoardSetup from "../screens/Boardsetup";
+import PlayerTurnManager from "../screens/PlayerTurnManager";
 import { PlayerData } from "../types";
 
 export type RootStackParamList={
     Landing: undefined;
     PlayerConfig: undefined;
     BoardSetup:{players:PlayerData[]};
+    PlayerTurnManager: { players: PlayerData[]; initialBoard: number[][]; cellSize: number; cellMargin: number };
 }
 
 const Stack=createStackNavigator<RootStackParamList>();
@@ -28,6 +30,9 @@ const AppNavigator: React.FC=()=>(
             name="BoardSetup"
             component={BoardSetup}
             options={{ title: 'Game Board' }}/>
+            <Stack.Screen name="PlayerTurnManager"
+            component={PlayerTurnManager}
+            options={{title:'Player Turn'}}/>
         </Stack.Navigator>
     </NavigationContainer>
 )

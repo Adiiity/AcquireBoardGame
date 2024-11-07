@@ -22,45 +22,13 @@ const Landing:React.FC<Props>=({navigation})=>{
         style={styles.button}
         onPress={() => navigation.navigate('PlayerConfig')}
       >
-        <Text style={styles.buttonText}>Start Game</Text>
+        <Text style={styles.buttonText}>Let's Begin</Text>
       </TouchableOpacity>
     </View>
     </ImageBackground>
     )
 }
 export default Landing;
-
-// const styles=StyleSheet.create({
-// container:{
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     padding: 20,
-//     backgroundColor: '#FFFFFF',
-// },
-// title: {
-//     fontSize: 32,
-//     fontWeight: 'bold',
-//     marginBottom: 20,
-//     color: '#000000', // Black text
-//   },
-//   tagline: {
-//     fontSize: 16,
-//     marginBottom: 40,
-//     color: '#555555', // Dark grey text
-//     textAlign: 'center',
-//   },
-//   button: {
-//     backgroundColor: '#007AFF', // iOS default blue color
-//     paddingVertical: 15,
-//     paddingHorizontal: 60,
-//     borderRadius: 8,
-//   },
-//   buttonText: {
-//     color: '#FFFFFF', // White text
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//   },
 
 const styles = StyleSheet.create({
     background: {
