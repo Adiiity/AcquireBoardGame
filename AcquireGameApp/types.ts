@@ -1,27 +1,42 @@
 export interface PlayerData {
-    id: number;
-    name: string;
-    mode: 'Self' | 'Strategy 1' | 'Strategy 2' | 'Strategy 3' | 'Strategy 4';
-    cash: number;
-    stocks: { [hotelChainId: number]: number },
-  }
+  id: number;
+  name: string;
+  mode: 'Self' | 'Strategy 1' | 'Strategy 2' | 'Strategy 3' | 'Strategy 4';
+  cash: number;
+  sharesCount: number[];               // Represents shares count for each hotel chain
+  tiles: string[];                      // Player's owned tiles (e.g., ['A1', 'B2'])
+}
 
-  export interface HotelChain {
-    id: number;
-    name: string;
-    color: string;
-    availableStocks: number;
-  }
+export interface HotelChain {
+  id: number;
+  name: string;
+  color: string;
+  availableStocks: number;
+}
 
-  export interface BoardTile {
-    row: number;
-    col: number;
-    hotelChainId: number | null; // Null if unoccupied
-  }
+export interface BoardTile {
+  row: number;
+  col: number;
+  hotelChainId: number | null;          // Null if unoccupied, -1 for occupied, 0-6 for hotel chains
+}
 
-  export interface GameState {
-    board: BoardTile[][];
-    hotelChains: HotelChain[];
-    currentPlayerId: number;
-   // Need to refer backend
-  }
+// This reflects the backend's board state structure for /play response
+export interface BoardState {
+  boardState: number[][];               // 2D array indicating occupancy and hotel chain on each tile
+}
+
+// The GameState represents the state of the game received from the backend
+export interface GameState {
+  board: BoardState;                    // The board's current state
+  players: PlayerData[];                // List of players with updated assets
+  hotelsInfo: {
+      hotelAvailable: boolean[];        // Availability of each hotel
+      hotelSharesCount: number[];       // Stocks available for each hotel
+  };
+  currentPlayerId: number;              // ID of the current player
+}
+
+export interface BackendResponse {
+  state: GameState;                     // Game state from backend
+  sharesValuation: number[];            // Array for share valuations (optional if needed)
+}

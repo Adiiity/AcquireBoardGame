@@ -4,8 +4,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { RouteProp } from '@react-navigation/native';
 import { colors } from '../colors';
-import { MOCK_GAME_STATE } from '../mockData';
+
 import { HotelChain } from '../types';
+import PlayerTurnManager from './PlayerTurnManager';
 
 type BoardNavigationProp= StackNavigationProp<RootStackParamList,'BoardSetup'>;
 
@@ -38,12 +39,8 @@ const BoardSetup: React.FC<Props> = ({ navigation, route }) => {
     const { players } = route.params; // Assuming you pass players from previous screen
   
     // Generate board data
-    const boardData = Array.from({ length: numRows }, (_, row) =>
-      Array.from({ length: numCols }, (_, col) => ({
-        row,
-        col,
-        occupied: false, // Placeholder for whether the tile is occupied
-      }))
+     const boardData = Array.from({ length: numRows }, () =>
+        Array.from({ length: numCols }, () => -2) // -2 indicates unoccupied
     );
   
     return (
@@ -51,33 +48,19 @@ const BoardSetup: React.FC<Props> = ({ navigation, route }) => {
         <Text style={styles.title}>Acquire</Text>
         <View style={styles.board}>
           {boardData.map((rowData, rowIndex) => (
-            <View key={rowIndex} style={styles.row}>
-              {rowData.map(cell => (
-                <TouchableOpacity
-                  key={`${cell.row}-${cell.col}`}
-                  style={[styles.cell,
-                    {
-                        width: cellSize,
-                        height: cellSize,
-                        margin: cellMargin,
-                        // backgroundColor: cell.occupied ? colors.tileOccupied : colors.tileBackground,
-                      },
-                  ]}
-                  onPress={() => {
-                    // Board Interaction
-                    Alert.alert(
-                        'Cell Pressed',
-                        `You pressed cell ${String.fromCharCode(65 + cell.row)}${cell.col + 1}`
-                      );
-                  }}
-                >
-                  <Text style={styles.cellText}>
-                    {String.fromCharCode(65 + cell.row)}
-                    {cell.col + 1}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+             <View key={rowIndex} style={styles.row}>
+             {rowData.map((cell, colIndex) => (
+                 <TouchableOpacity
+                     key={`${rowIndex}-${colIndex}`}
+                     style={[styles.cell, { width: cellSize, height: cellSize, margin: cellMargin }]}
+                     onPress={() => Alert.alert(`Cell Pressed: ${String.fromCharCode(65 + rowIndex)}${colIndex + 1}`)}
+                 >
+                     <Text style={styles.cellText}>
+                         {String.fromCharCode(65 + rowIndex)}{colIndex + 1}
+                     </Text>
+                 </TouchableOpacity>
+             ))}
+         </View>
           ))}
         </View>
             <Text style={styles.subtitle}>Available Hotel Chains:</Text>
@@ -106,7 +89,19 @@ const BoardSetup: React.FC<Props> = ({ navigation, route }) => {
                 </View>
             )}
             />
-
+            <TouchableOpacity
+                style={styles.startGameButton}
+                onPress={() =>
+                    navigation.navigate('PlayerTurnManager', {
+                        players,
+                        initialBoard: boardData,
+                        cellSize,
+                        cellMargin,
+                    })
+                }
+            >
+                <Text style={styles.buttonText}>Start Game</Text>
+            </TouchableOpacity>
       </ScrollView>
     );
   };
@@ -126,6 +121,18 @@ const BoardSetup: React.FC<Props> = ({ navigation, route }) => {
       textAlign: 'center',
       color: colors.text,
     },
+    startGameButton: {
+      backgroundColor: colors.accent,
+      padding: 15,
+      marginTop: 20,
+      borderRadius: 8,
+      alignItems: 'center',
+  },
+  buttonText: {
+      color: '#FFFFFF',
+      fontSize: 18,
+      fontWeight: 'bold',
+  },
     board: {
       flexDirection: 'column',
       alignItems: 'center',
