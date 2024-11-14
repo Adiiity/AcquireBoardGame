@@ -1,5 +1,3 @@
-// PlayerTurnManager.tsx
-
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -18,6 +16,7 @@ import BuyStocks from './BuyStocks';
 import { HotelChain } from '../types';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 
 type PlayerTurnManagerRouteProp = RouteProp<RootStackParamList, 'PlayerTurnManager'>;
 
@@ -65,6 +64,13 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
       tiles: currentPlayer.tiles,
     });
   }, [currentTurn, players]);
+
+  const navigation = useNavigation(); 
+
+  const openDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
+
 
   const determineGameAction = (previousBoardState: number[][], newBoardState: number[][]) => {
     let foundCount = 0;
@@ -259,8 +265,14 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Current Turn: {players[currentTurn].name}</Text>
-
+       {/* <View style={styles.header}>
+        <TouchableOpacity style={styles.menuButton} onPress={openDrawer}>
+          <Text style={styles.menuButtonText}>☰</Text>
+        </TouchableOpacity>
+        <Text style={styles.title}>Current Turn: {players[currentTurn].name}</Text>
+      </View>
+      <Text style={styles.title}>Current Turn: {players[currentTurn].name}</Text> */}
+       <Text style={styles.title}>Current Turn: {players[currentTurn].name}</Text>
       <View style={styles.board}>
         {boardState.map((rowData, rowIndex) => (
           <View key={rowIndex} style={{ flexDirection: 'row' }}>
@@ -357,6 +369,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     backgroundColor: colors.background,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  menuButton: {
+    padding: 10,
+  },
+  menuButtonText: {
+    fontSize: 24,
+    color: colors.text,
   },
   title: {
     fontSize: 22,
