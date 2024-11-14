@@ -11,7 +11,7 @@ export interface HotelChain {
   id: number;
   name: string;
   color: string;
-  availableStocks: number;
+  // availableStocks: number;
 }
 
 export interface BoardTile {

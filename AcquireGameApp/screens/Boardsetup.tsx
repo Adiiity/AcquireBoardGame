@@ -26,13 +26,13 @@ const BoardSetup: React.FC<Props> = ({ navigation, route }) => {
     const cellSize = (boardWidth - cellMargin * 2 * numCols) / numCols;
 
     const hotelChains: HotelChain[] = [
-        { id: 1, name: 'Luxor', color: '#FFD700', availableStocks: 25 },
-        { id: 2, name: 'Tower', color: '#800080', availableStocks: 25 },
-        { id: 3, name: 'American', color: '#FF0000', availableStocks: 25 },
-        { id: 4, name: 'Festival', color: '#008000', availableStocks: 25 },
-        { id: 5, name: 'Imperial', color: '#0000FF', availableStocks: 25 },
-        { id: 6, name: 'Worldwide', color: '#FFA500', availableStocks: 25 },
-        { id: 7, name: 'Continental', color: '#A52A2A', availableStocks: 25 },
+        { id: 1, name: 'Luxor', color: '#FFD700' },//, availableStocks: 25 },
+        { id: 2, name: 'Tower', color: '#800080'},
+        { id: 3, name: 'American', color: '#FF0000'},
+        { id: 4, name: 'Festival', color: '#008000'},
+        { id: 5, name: 'Imperial', color: '#0000FF'},
+        { id: 6, name: 'Worldwide', color: '#FFA500'},
+        { id: 7, name: 'Continental', color: '#A52A2A'}
       ];
 
     // For now, we'll use placeholder data
