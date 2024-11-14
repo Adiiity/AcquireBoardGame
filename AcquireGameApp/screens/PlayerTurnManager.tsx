@@ -16,12 +16,18 @@ import BuyStocks from './BuyStocks';
 import { HotelChain } from '../types';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 type PlayerTurnManagerRouteProp = RouteProp<RootStackParamList, 'PlayerTurnManager'>;
+type PlayerTurnManagerNavigationProp = StackNavigationProp<RootStackParamList, 'PlayerTurnManager'>;
+
+// const navigation=useNavigation<PlayerTurnManagerRouteProp>();
 
 type Props = {
   route: PlayerTurnManagerRouteProp;
+  navigation: PlayerTurnManagerNavigationProp;
 };
 
 const hotelChains: HotelChain[] = [
@@ -35,6 +41,9 @@ const hotelChains: HotelChain[] = [
 ];
 
 const PlayerTurnManager: React.FC<Props> = ({ route }) => {
+  
+  const navigation = useNavigation<PlayerTurnManagerNavigationProp>();
+
   const { initialBoard, cellSize, cellMargin } = route.params;
   const [players, setPlayers] = useState<PlayerData[]>(route.params.players);
   const [currentTurn, setCurrentTurn] = useState(0);
@@ -66,9 +75,11 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
     console.log('Current player assets updated:', currentPlayerAssets);
   }, [currentTurn, players]);
 
-  // const playerStocks = currentPlayerAssets.sharesCount
-  //   .map((count, index) => (count > 0 ? { hotel: hotelChains[index].name, count } : null))
-  //   .filter((stock) => stock !== null);
+  // Function to navigate to the Winner screen
+  const handleFinishGame = () => {
+    navigation.navigate('Winner', { players });
+  };
+
 
   const determineGameAction = (previousBoardState: number[][], newBoardState: number[][]) => {
     let foundCount = 0;
@@ -369,9 +380,14 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
         </TouchableOpacity>
       )}
       {buttonState === 'passTurn' && (
+        <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.passTurnButton} onPress={handlePassTurn}>
           <Text style={styles.passTurnText}>Pass Turn</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.finishGameButton} onPress={handleFinishGame}>
+          <Text style={styles.finishGameText}>Finish Game</Text>
+        </TouchableOpacity>
+      </View>
       )}
 
       <BuyStocks
@@ -489,7 +505,8 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20,
+    flex: 1, // Make buttons equal width
+    marginRight: 10, // Add space between buttons
   },
   passTurnText: {
     color: '#FFFFFF',
@@ -533,6 +550,34 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: '#F5F5F5',
     borderRadius: 4,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    marginBottom: 20, // Add bottom margin for better spacing
+    paddingHorizontal: 10, // Add horizontal padding
+  },
+  finishGameButton: {
+    backgroundColor: '#DC3545', // Use a more subtle red
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 1, // Make buttons equal width
+    marginLeft: 10, // Add space between buttons
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // Add elevation for Android
+  },
+  finishGameText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

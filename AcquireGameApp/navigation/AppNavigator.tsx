@@ -9,6 +9,7 @@ import Landing from "../screens/Landing";
 import PlayerConfig from "../screens/PlayerConfig";
 import BoardSetup from "../screens/Boardsetup";
 import PlayerTurnManager from "../screens/PlayerTurnManager";
+import Winner from "../screens/Winner";
 import { PlayerData } from "../types";
 import Preferences from '../screens/Preferences';
 import { Alert, BackHandler, Text, TouchableOpacity } from "react-native";
@@ -19,6 +20,7 @@ export type RootStackParamList={
     PlayerConfig: undefined;
     BoardSetup:{players:PlayerData[]};
     PlayerTurnManager: { players: PlayerData[]; initialBoard: number[][]; cellSize: number; cellMargin: number };
+    Winner: { players: PlayerData[] };
 }
 
 const Stack=createStackNavigator<RootStackParamList>();
@@ -92,6 +94,8 @@ const MainStackNavigator: React.FC = () => (
           </TouchableOpacity>
         ),
       })} />
+
+    <Stack.Screen name="Winner" component={Winner} options={{ title: 'Game Over' }} /> 
     </Stack.Navigator>
   );
   // Custom Drawer Content
