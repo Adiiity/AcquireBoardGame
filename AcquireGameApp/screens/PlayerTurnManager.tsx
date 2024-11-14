@@ -63,14 +63,12 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
       sharesCount: currentPlayer.sharesCount,
       tiles: currentPlayer.tiles,
     });
+    console.log('Current player assets updated:', currentPlayerAssets);
   }, [currentTurn, players]);
 
-  const navigation = useNavigation(); 
-
-  const openDrawer = () => {
-    navigation.dispatch(DrawerActions.openDrawer());
-  };
-
+  // const playerStocks = currentPlayerAssets.sharesCount
+  //   .map((count, index) => (count > 0 ? { hotel: hotelChains[index].name, count } : null))
+  //   .filter((stock) => stock !== null);
 
   const determineGameAction = (previousBoardState: number[][], newBoardState: number[][]) => {
     let foundCount = 0;
@@ -197,6 +195,7 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
   };
 
   const handleConfirmStockPurchase = (purchases: { hotelId: number; quantity: number }[]) => {
+    console.log('Starting stock purchase with:', purchases);
     // Update player's cash and shares count
     let totalCost = 0;
 
@@ -211,16 +210,20 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
 
       totalCost += cost;
 
+      // currentPlayer.cash -= cost;
+      // currentPlayer.sharesCount[p.hotelId] += p.quantity;
+
+      // updatedHotelSharesCount[p.hotelId] -= p.quantity;
+      totalCost += cost;
+      if (currentPlayer.cash < totalCost) {
+        Alert.alert('Error', 'You do not have enough cash.');
+        return;
+      }
+
       currentPlayer.cash -= cost;
       currentPlayer.sharesCount[p.hotelId] += p.quantity;
-
       updatedHotelSharesCount[p.hotelId] -= p.quantity;
     });
-
-    if (currentPlayer.cash < 0) {
-      Alert.alert('Error', 'You do not have enough cash.');
-      return;
-    }
 
     updatedPlayers[currentTurn] = currentPlayer;
     setPlayers(updatedPlayers);
@@ -237,6 +240,7 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
       tiles: currentPlayer.tiles,
     });
 
+    console.log('Final player state:', currentPlayer);
     setIsBuyStocksVisible(false);
 
     // Update the button state to "passTurn" after buying stocks
@@ -263,15 +267,39 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
     return size;
   };
 
+  const renderPlayerStocks = () => {
+    console.log('Rendering stocks with:', currentPlayerAssets.sharesCount);
+    
+    const playerStocks = currentPlayerAssets.sharesCount
+      .map((count, index) => ({
+        hotel: hotelChains[index].name,
+        count,
+        color: hotelChains[index].color
+      }))
+      .filter(stock => stock.count > 0);
+
+    console.log('Filtered player stocks:', playerStocks);
+
+    if (playerStocks.length === 0) {
+      return <Text style={styles.noStocks}>No Stocks Owned</Text>;
+    }
+
+    return (
+      <View style={styles.stocksContainer}>
+        <Text style={styles.playerStocksTitle}>Stocks:</Text>
+        {playerStocks.map((stock, index) => (
+          <View key={index} style={[styles.stockItem, { borderLeftColor: stock.color }]}>
+            <Text style={styles.playerStock}>
+              {stock.hotel}: {stock.count}
+            </Text>
+          </View>
+        ))}
+      </View>
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
-       {/* <View style={styles.header}>
-        <TouchableOpacity style={styles.menuButton} onPress={openDrawer}>
-          <Text style={styles.menuButtonText}>☰</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Current Turn: {players[currentTurn].name}</Text>
-      </View>
-      <Text style={styles.title}>Current Turn: {players[currentTurn].name}</Text> */}
        <Text style={styles.title}>Current Turn: {players[currentTurn].name}</Text>
       <View style={styles.board}>
         {boardState.map((rowData, rowIndex) => (
@@ -322,11 +350,12 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
 
       <Text style={styles.subtitle}>Current Player Assets</Text>
       <View style={styles.playerCard}>
+        <View style={styles.playerCard}>
         <Text style={styles.playerName}>{players[currentTurn].name}</Text>
         <Text style={styles.playerCash}>Cash: ${currentPlayerAssets.cash.toFixed(2)}</Text>
-        <Text style={styles.playerStocks}>
-          Shares Count: {currentPlayerAssets.sharesCount.join(', ')}
-        </Text>
+        {renderPlayerStocks()}
+      </View>
+
       </View>
 
       {buttonState === 'placeTile' && (
@@ -370,19 +399,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.background,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  menuButton: {
-    padding: 10,
-  },
-  menuButtonText: {
-    fontSize: 24,
-    color: colors.text,
-  },
   title: {
     fontSize: 22,
     textAlign: 'center',
@@ -420,14 +436,19 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   playerCard: {
-    padding: 10,
+    padding: 16,
     borderWidth: 1,
     borderColor: colors.textSecondary,
-    borderRadius: 5,
-    marginBottom: 10,
+    borderRadius: 8,
+    marginBottom: 16,
     backgroundColor: '#FFFFFF',
     width: '90%',
     alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   playerName: {
     fontSize: 18,
@@ -474,6 +495,44 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  playerStocksTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#000000',
+  },
+  stocksContainer: {
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.textSecondary,
+    paddingTop: 8,
+  },
+  stockItem: {
+    borderLeftWidth: 6,
+    paddingLeft: 12,
+    paddingVertical: 8,
+    marginVertical: 4,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  playerStock: {
+    fontSize: 16,
+    color: '#000000',
+    fontWeight: '600',
+  },
+  noStocks: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 8,
+    padding: 12,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 4,
   },
 });
 

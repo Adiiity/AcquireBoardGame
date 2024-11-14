@@ -85,7 +85,6 @@ const BoardSetup: React.FC<Props> = ({ navigation, route }) => {
                 <View style={styles.playerCard}>
                 <Text style={styles.playerName}>{item.name}</Text>
                 <Text style={styles.playerCash}>Cash: ${item.cash}</Text>
-                <Text style={styles.playerStocks}>Stocks: None</Text>
                 </View>
             )}
             />
