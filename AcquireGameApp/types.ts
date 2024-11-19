@@ -1,7 +1,15 @@
+export enum PlayerMode {
+  Self = 'self',
+  Random = 'random',
+  SmallestAnti = 'smallest-anti',
+  LargestAlpha = 'largest-alpha',
+  Intelligent = 'intelligent',
+}
+
 export interface PlayerData {
   id: number;
   name: string;
-  mode: 'Self' | 'Strategy 1' | 'Strategy 2' | 'Strategy 3' | 'Strategy 4';
+  mode: PlayerMode ;
   cash: number;
   sharesCount: number[];               // Represents shares count for each hotel chain
   tiles: string[];                      // Player's owned tiles (e.g., ['A1', 'B2'])

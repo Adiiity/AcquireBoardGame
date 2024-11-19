@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert 
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { PlayerData } from "../types";
+import { PlayerData, PlayerMode } from "../types";
 import { colors } from "../colors";
 
 import mockData from '../mockData.json';
@@ -22,20 +22,27 @@ const PlayerConfig: React.FC<Props> = ({ navigation }) => {
   const [players, setPlayers] = useState<PlayerData[]>([]);
 
   useEffect(() => {
-    // Initialize players with default values
     const initialPlayers = Array.from({ length: numPlayers }, (_, index) => ({
       id: index,
       name: `Player ${index + 1}`,
-      mode: 'Self' as const,
+      mode: PlayerMode.Self, // Enum usage
       cash: initialCash,
-      sharesCount: [...initialStocks], // Initialize sharesCount array with zeros for each hotel chain
-      tiles: [], // No tiles at the beginning
+      sharesCount: [...initialStocks],
+      tiles: [], 
     }));
     setPlayers(initialPlayers);
   }, [numPlayers]);
 
   // Handle changes to player data
   const handlePlayerChange = (id: number, field: keyof PlayerData, value: any) => {
+    if (field === 'mode' && (value === 'self' || value === 'intelligent')) {
+      Alert.alert(
+        'Under Construction',
+        'The selected mode is under construction. Please choose another strategy.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
     const updatedPlayers = players.map(player =>
       player.id === id ? { ...player, [field]: value } : player
     );
@@ -43,38 +50,44 @@ const PlayerConfig: React.FC<Props> = ({ navigation }) => {
   };
 
   // Function to proceed to the next screen and send setup data to backend
+  // const handleProceed = async () => {
+  //   const response = mockData;
+  //   // Alert.alert('Setup Response', 'Mock setup data loaded successfully');
+  //   navigation.navigate('BoardSetup', { players });
+  // };
+
   const handleProceed = async () => {
-    // const playerModes = players.map(player => player.mode);
-
-    // try {
-    //   const response = await fetch("https://acquiregame.onrender.com/setup", {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({ playerModes })
-    //   });
-
-    //   if (!response.ok) {
-    //     throw new Error('Failed to set up the game');
-    //   }
-
-    //   const textResponse = await response.text();
-    //   Alert.alert('Setup Response', textResponse);
-    //   console.log(textResponse);
-
-    //   // Navigate to BoardSetup screen with players after successful setup
-    //   navigation.navigate('BoardSetup', { players });
-    // } catch (error) {
-    //   console.error('Error during setup: ', error);
-    //   Alert.alert('Error', 'An error occurred while setting up the game');
-    // }
-
-    const response = mockData;
-    // Alert.alert('Setup Response', 'Mock setup data loaded successfully');
-    navigation.navigate('BoardSetup', { players });
+    const playerModes = players.map(player => player.mode);
+  
+    // Log the data being sent to the API
+    console.log("Data being sent to the API:", { playerTypes: playerModes });
+  
+    try {
+      const response = await fetch("https://acquiregame.onrender.com/setup", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ playerTypes: playerModes }), 
+      });
+  
+      // Check if the request was successful
+      if (!response.ok) {
+        throw new Error('Failed to set up the game');
+      }
+  
+      // Log success
+      console.log("API call successful. Proceeding to the next screen.");
+  
+      // Navigate to BoardSetup screen with players after successful setup
+      navigation.navigate('BoardSetup', { players });
+    } catch (error) {
+      console.error('Error during setup:', error);
+      Alert.alert('Error', 'An error occurred while setting up the game');
+    }
   };
 
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Configure Players</Text>
@@ -111,11 +124,11 @@ const PlayerConfig: React.FC<Props> = ({ navigation }) => {
                 style={styles.picker}
                 itemStyle={{ color: colors.text }}
               >
-                <Picker.Item label="Self" value="Self" />
-                <Picker.Item label="Strategy 1" value="Strategy 1" />
-                <Picker.Item label="Strategy 2" value="Strategy 2" />
-                <Picker.Item label="Strategy 3" value="Strategy 3" />
-                <Picker.Item label="Strategy 4" value="Strategy 4" />
+                <Picker.Item label="Self" value="self" />
+                <Picker.Item label="Random Bot" value="random" />
+                <Picker.Item label="Smallest-Anti Bot" value="smallest-anti" />
+                <Picker.Item label="Largest-Alpha Bot" value="largest-alpha" />
+                <Picker.Item label="Intelligent Bot" value="intelligent" />
               </Picker>
             </View>
           </View>
