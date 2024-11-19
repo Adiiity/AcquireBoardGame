@@ -13,11 +13,12 @@ import { colors } from '../colors';
 
 import { getStockPrice } from '../utils';
 import BuyStocks from './BuyStocks';
+import GameNotification from '../notification/GameNotification';
 import { HotelChain } from '../types';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useNavigation } from '@react-navigation/native';
-import { BackHandler } from 'react-native';
+
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type PlayerTurnManagerRouteProp = RouteProp<RootStackParamList, 'PlayerTurnManager'>;
@@ -80,6 +81,11 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
     navigation.navigate('Winner', { players });
   };
 
+  const [notification, setNotification] = useState<{
+    visible: boolean;
+    message: string;
+    type: 'found' | 'grow' | 'merge';
+  } | null>(null);
 
   const determineGameAction = (previousBoardState: number[][], newBoardState: number[][]) => {
     let foundCount = 0;
@@ -160,11 +166,23 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
       // Determine and announce game action
       const gameAction = determineGameAction(previousBoardState, board.boardState);
       if (gameAction === 'found') {
-        Alert.alert('Announcement', 'A new hotel chain has been founded!');
+        setNotification({
+        visible: true,
+        message: 'A new hotel chain has been founded!',
+        type: 'found'
+      });
       } else if (gameAction === 'grow') {
-        Alert.alert('Announcement', 'An existing hotel chain has grown!');
-      } else if (gameAction === 'merge') {
-        Alert.alert('Announcement', 'Two hotel chains have merged!');
+        setNotification({
+          visible: true,
+          message: 'An existing hotel chain has grown!',
+          type: 'grow'
+        });
+      }  else if (gameAction === 'merge') {
+        setNotification({
+          visible: true,
+          message: 'Two hotel chains have merged!',
+          type: 'merge'
+        });
       }
 
       // Update hotels info
@@ -310,7 +328,16 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
   };
 
   return (
+    <View style={styles.mainContainer}>
+      {notification && notification.visible && (
+      <GameNotification
+        message={notification.message}
+        type={notification.type}
+        onHide={() => setNotification(null)}
+      />
+    )}
     <ScrollView style={styles.container}>
+      
        <Text style={styles.title}>Current Turn: {players[currentTurn].name}</Text>
       <View style={styles.board}>
         {boardState.map((rowData, rowIndex) => (
@@ -404,16 +431,21 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
         boardState={boardState}
       />
     </ScrollView>
+    </View>
   );
 };
 
 export default PlayerTurnManager;
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: colors.background,
+    // backgroundColor: colors.background,
   },
   title: {
     fontSize: 22,
@@ -580,4 +612,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
 

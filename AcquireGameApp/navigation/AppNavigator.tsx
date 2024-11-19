@@ -14,7 +14,6 @@ import { PlayerData } from "../types";
 import Preferences from '../screens/Preferences';
 import { Alert, BackHandler, Text, TouchableOpacity } from "react-native";
 
-
 export type RootStackParamList={
     Landing: undefined;
     PlayerConfig: undefined;
@@ -95,7 +94,16 @@ const MainStackNavigator: React.FC = () => (
         ),
       })} />
 
-    <Stack.Screen name="Winner" component={Winner} options={{ title: 'Game Over' }} /> 
+        <Stack.Screen 
+                name="Winner" 
+                component={Winner} 
+                options={{ 
+                title: 'Game Over',
+                headerLeft: () => null, 
+                gestureEnabled: false, 
+                headerBackTitle: ' ', 
+                }} 
+            />
     </Stack.Navigator>
   );
   // Custom Drawer Content
@@ -132,4 +140,3 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps>  = ({ navigatio
   );
 
 export default AppNavigator;
-
