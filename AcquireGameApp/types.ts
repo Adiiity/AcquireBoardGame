@@ -1,8 +1,8 @@
 export enum PlayerMode {
   Self = 'self',
   Random = 'random',
-  SmallestAnti = 'smallest-anti',
-  LargestAlpha = 'largest-alpha',
+  SmallestAnti = 'smallest_anti',
+  LargestAlpha = 'largest_alpha',
   Intelligent = 'intelligent',
 }
 

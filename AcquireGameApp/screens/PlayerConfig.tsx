@@ -126,8 +126,8 @@ const PlayerConfig: React.FC<Props> = ({ navigation }) => {
               >
                 <Picker.Item label="Self" value="self" />
                 <Picker.Item label="Random Bot" value="random" />
-                <Picker.Item label="Smallest-Anti Bot" value="smallest-anti" />
-                <Picker.Item label="Largest-Alpha Bot" value="largest-alpha" />
+                <Picker.Item label="Smallest-Anti Bot" value="smallest_anti" />
+                <Picker.Item label="Largest-Alpha Bot" value="largest_alpha" />
                 <Picker.Item label="Intelligent Bot" value="intelligent" />
               </Picker>
             </View>

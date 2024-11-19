@@ -141,20 +141,98 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
     return chains;
   };
 
-  const handlePlaceTile = async () => {
-    if (moveIndex > 12) {
-      Alert.alert('Game Over');
-      return;
-    }
+  // const handlePlaceTile = async () => {
+  //   if (moveIndex > 12) {
+  //     Alert.alert('Game Over');
+  //     return;
+  //   }
 
-    try {
-      // Fetch the next move from the backend
-      const response = await fetch(`https://acquiregame.onrender.com/${moveIndex}`);
+  //   try {
+  //     // Fetch the next move from the backend
+  //     const response = await fetch(`https://acquiregame.onrender.com/${moveIndex}`);
+  //     if (!response.ok) {
+  //       throw new Error(`Failed to fetch move ${moveIndex}`);
+  //     }
+  //     const data = await response.json();
+
+  //     const previousBoardState = boardState.map((row) => [...row]); // Deep copy of board state
+
+  //     // Update game state based on the response
+  //     const { board, players: updatedPlayersFromBackend, hotelsInfo: updatedHotelsInfo } = data;
+
+  //     // Update board state
+  //     setBoardState(board.boardState);
+
+  //     // Determine and announce game action
+  //     const gameAction = determineGameAction(previousBoardState, board.boardState);
+  //     if (gameAction === 'found') {
+  //       setNotification({
+  //       visible: true,
+  //       message: 'A new hotel chain has been founded!',
+  //       type: 'found'
+  //     });
+  //     } else if (gameAction === 'grow') {
+  //       setNotification({
+  //         visible: true,
+  //         message: 'An existing hotel chain has grown!',
+  //         type: 'grow'
+  //       });
+  //     }  else if (gameAction === 'merge') {
+  //       setNotification({
+  //         visible: true,
+  //         message: 'Two hotel chains have merged!',
+  //         type: 'merge'
+  //       });
+  //     }
+
+  //     // Update hotels info
+  //     setHotelsInfo(updatedHotelsInfo);
+
+  //     // Update players
+  //     const updatedPlayers = players.map((player, index) => {
+  //       const updatedPlayerData = updatedPlayersFromBackend[index];
+  //       return {
+  //         ...player,
+  //         cash: updatedPlayerData.cash,
+  //         sharesCount: updatedPlayerData.sharesCount,
+  //         tiles: updatedPlayerData.tiles,
+  //       };
+  //     });
+  //     setPlayers(updatedPlayers);
+
+  //     // Update current player's assets
+  //     setCurrentPlayerAssets({
+  //       cash: updatedPlayers[currentTurn].cash,
+  //       sharesCount: updatedPlayers[currentTurn].sharesCount,
+  //       tiles: updatedPlayers[currentTurn].tiles,
+  //     });
+
+  //     // Update the button state to "buyStocks"
+  //     setButtonState('buyStocks');
+
+  //     // Increment move index for next turn
+  //     setMoveIndex(moveIndex + 1);
+  //   } catch (error) {
+  //     console.error('Error fetching move:', error);
+  //     Alert.alert('Error', `An error occurred while fetching move ${moveIndex}`);
+  //   }
+  // };
+
+  const handlePlaceTile = async() =>{
+    try{
+      const response = await fetch(`https://acquiregame.onrender.com/botTurn`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ playerIndex: currentTurn }), // Send currentTurn as playerIndex
+      });
+      
       if (!response.ok) {
-        throw new Error(`Failed to fetch move ${moveIndex}`);
+        throw new Error('Failed to fetch bot turn');
       }
-      const data = await response.json();
 
+      const data = await response.json();
       const previousBoardState = boardState.map((row) => [...row]); // Deep copy of board state
 
       // Update game state based on the response
@@ -216,7 +294,7 @@ const PlayerTurnManager: React.FC<Props> = ({ route }) => {
       console.error('Error fetching move:', error);
       Alert.alert('Error', `An error occurred while fetching move ${moveIndex}`);
     }
-  };
+  }
 
   const handleBuyStocks = () => {
     // Open the Buy Stocks modal
